@@ -17,6 +17,7 @@ var index = {
     });
     ECHARTS_FUNC.area_total_map('area-total-map', 'china');
     $('.img-rotate:last').click();
+    index.init_ajax();
   },
 
   select_con_text: function($obj) {
@@ -126,6 +127,12 @@ var index = {
           }
         })
       }
+    })
+  },
+
+  init_ajax: function() {
+    COMMON_FUNC.ajax_get($('#init-url'), function(data) {
+      console.log(data);
     })
   }
 };

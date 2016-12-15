@@ -151,6 +151,101 @@ var COMMON_FUNC = {
         name: name
       });
     }
+  },
+
+  ajax_get: function($obj, data, url, error_callback, callback){
+    /*
+     ajax get通用方法
+     参数：
+     $obj: 触发GET事件的元数对象，一般为a标签或button。
+     data (可选): 往URL上附加的额外参数。
+     url (可选): GET请求的URL路径，不传会从$obj对象上获取url属性，没有url属性时默认用当前路径.
+     error_callback (可选): 异常时的回调函数
+     callback: 成功时的回调函数
+     */
+    var self = this;
+    var args = Array.prototype.slice.call(arguments);
+    var _callback = args.slice(-1)[0];
+    error_callback = null;
+    call_back = null;
+    if(_.isFunction(_callback)){
+      var callback = args.pop();
+      var _error_callback = args.slice(-1)[0];
+      if(_.isFunction(_error_callback)){
+        error_callback =  args.pop();
+      }
+      $obj = args[0];
+      data = args[1];
+      url = args[2];
+    }
+    if($obj.hasClass('disabled')){
+/*      self.full_loading("hide");*/
+    }
+    else{
+      $obj.addClass('disabled');
+      var my_date = new Date;
+      data = data || {};
+/*      $.extend(data, {time: my_date.getTime()});*/
+      var url= url || $obj.attr('url') || '.';
+      return $.ajax({
+        type: 'GET',
+        url: url,
+        data: data,
+        dataType:'JSONP',
+        jsonp: 'callback',
+        jsonpCallback:'success_jsonpCallback',
+        success: function(result){
+          if(result.msg){
+            console.log(result.msg);
+          }
+          $obj.removeClass('disabled');
+          if(_.isFunction(callback)){
+            callback(result);
+          }
+          if(result.reload === 1){
+            self._reload();
+          }
+          else if(result.reload === 2){
+            self.reload();
+          }
+          else if(result.reload === 3){
+            self._reload(0);
+          }
+          else if(result.redirect){
+            self.redirect(result.redirect);
+          }
+/*          self.full_loading("hide");*/
+        },
+        error: function(xhr, msg, error){
+          if(msg === "error"){
+            if(xhr.status === 404){
+              console.info("无效的数据");
+            }
+            else if(xhr.status === 500){
+              console.info("服务器异常，请联系管理员");
+            }
+            else if(xhr.status === 403){
+              console.info("登录已过期或没有访问权限");
+              self._reload();
+            }
+            else{
+              console.info("网络异常，请稍后再试");
+            }
+          }
+          else{
+            if(msg){
+              console.log(msg);
+            }
+          }
+          if(_.isFunction(error_callback)){
+            error_callback();
+          };
+          $obj.removeClass('disabled');
+/*          self.full_loading("hide");*/
+        }
+      });
+    }
+    return false;
   }
 
 };
