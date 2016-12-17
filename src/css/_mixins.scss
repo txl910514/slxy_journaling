@@ -161,8 +161,8 @@
     @each $y in top, right, bottom, left {
       .alert-#{$d}-#{$y} {
         box-sizing: content-box;
-        border-#{$d}: solid $width $color1;
-        border-#{$y}: solid $width $color1;
+        border-#{$d}: solid $width $color12;
+        border-#{$y}: solid $width $color12;
         position: absolute;
         #{$d}: $long;
         #{$y}: $long;

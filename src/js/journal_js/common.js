@@ -24,7 +24,7 @@ var COMMON_FUNC = {
   ready_init: function() {
     var self = this;
     self.get_time();
-    self.animate_num(2, 111101011);
+/*    self.animate_num(2, 111101011);*/
   },
 
   get_time: function() {
@@ -66,45 +66,33 @@ var COMMON_FUNC = {
     return $div;
   },
 
-  animate_num: function(startNum, endNum) {
+  animate_num: function($dom,startNum, endNum) {
     var self = this;
-    var time;
+    var time = 10;
     if (startNum > endNum) {
       console.info('数据顺序不对');
       return false;
     }
-    var length = (endNum - startNum).toString().length;
+    var length = (endNum - startNum).toString().length - 2;
     var add = 0;
     var $div;
-    if (length <= 3) {
+    if (length > 0) {
+      for (i = 0; i < length; i++) {
+        add += Math.pow(10,i);
+      }
+    }
+    else {
       add = 1;
-      time = 10;
-    }
-    else if (length > 3 && length < 5) {
-      add = 11;
-      time = 10;
-    }
-    else if (length >= 5 && length < 7) {
-      add = 1111;
-      time = 7;
-    }
-    else if (length >= 7 && length < 9) {
-      add = 11111;
-      time = 5;
-    }
-    else if (length >= 9 && length < 12) {
-      add = 111111;
-      time = 2;
     }
     var num_setInterval = setInterval(function() {
       if( startNum <= endNum) {
         $div = self.num_init(startNum);
         startNum += add;
-        $('#js-manage-frequency').html($div);
+        $dom.html($div);
       }
       else {
         $div = self.num_init(endNum);
-        $('#js-manage-frequency').html($div);
+        $dom.html($div);
         clearInterval(num_setInterval);
       }
     }, time);
@@ -145,6 +133,9 @@ var COMMON_FUNC = {
     $meter_arrow.addClass('meter-arrow-' + ($obj.index() + 1) );
     $meter_num.addClass('meter-num-' + ($obj.index() + 1));
     $('.' + alt + '-img').addClass('active').siblings().removeClass('active');
+    if (GVR.JSON.hospital_num) {
+      $('#meter-num').text(GVR.JSON.hospital_num[alt+'_num']);
+    }
     if (area_echarts) {
       area_echarts.dispatchAction({
         type:'legendSelect',
