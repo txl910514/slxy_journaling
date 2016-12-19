@@ -60,6 +60,17 @@ var gulp = require('gulp'),
 			}))
 			.pipe(gulp.dest("./rev"));
 	};
+var condition = function (file) {
+	// TODO: add business logic
+	var file_path = file.history[0].replace(file.cwd+'/', '');
+	if(file_path === pathConfig.src + 'js/jslib/underscore.js') {
+		console.log(file.history[0].replace(file.cwd+'/', ''));
+		return false;
+	}
+	else {
+		return true;
+	}
+};
 gulp.task('server', function () {
 	console.log(yargs.p);
 	yargs.p = yargs.p || 3000;
@@ -164,9 +175,10 @@ gulp.task('build-dist-html', function () {
 		})), manifest.html);
 });
 // 编译Js
+
 gulp.task('build-dist-js', function () {
-	return mkRev(gulp.src([pathConfig.src + 'js/**/*.*', '!'+pathConfig.src + 'js/**/underscore.js'])
-		.pipe(template(api))
+	return mkRev(gulp.src([pathConfig.src + 'js/**/*.*'])
+		.pipe(pkg.if(condition, template(api)))
 		.pipe(pkg.if(js, pkg.uglify()))
 		.pipe(gulp.dest(pathConfig.dist))
 		.pipe(browserSync.reload({

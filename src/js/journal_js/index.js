@@ -189,7 +189,9 @@ var index = {
       max:0,
       series:[]
     };
-    COMMON_FUNC.ajax_get($('#init-url'), function(data) {
+    var $init_url = $('#init-url');
+    var url = '<%=base%>' + $init_url.attr('url');
+    COMMON_FUNC.ajax_get($init_url, {}, url, function(data) {
       var last_hospitals_name;
       _.each(data, function(hospital, index) {
         if (province_path) {

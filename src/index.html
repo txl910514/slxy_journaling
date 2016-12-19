@@ -24,7 +24,7 @@
   </script>
 </head>
 <body>
-  <div class="content position-absolute" id="init-url" url="http://121.42.187.170:9000/s/vyunying/all">
+  <div class="content position-absolute" id="init-url" url="/s/vyunying/all">
     <div class="header">
       <div class="slyx-log">
         <img src="images/slxy_logo.png" alt="">
@@ -208,16 +208,16 @@
       <div class="apart-bottom-right"></div>
     </div>
   </div>
-  <script type="text/html" id="single_num_tpl">
+  <script type="text/tpl" id="single_num_tpl">
     <div class="num-style num-<%- index %>"></div>
   </script>
-  <script type="text/html" id="all_china_tpl">
+  <script type="text/tpl" id="all_china_tpl">
     <div class="map-select-line">
       <span class="select-con-label display-middle">默认：</span>
       <span class="select-con-text display-middle active" id="china">全国</span>
     </div>
   </script>
-  <script type="text/html" id="select_line_tpl">
+  <script type="text/tpl" id="select_line_tpl">
     <div class="map-select-line">
       <span class="select-con-label select-con-text display-middle" id="<%- area_key %>"><%- provinces[0] %>：</span>
       <% _.each(provinces, function(province, key){ %>
@@ -227,7 +227,7 @@
       <% }) %>
     </div>
   </script>
-  <script type="text/html" id="manage_money_tpl">
+  <script type="text/tpl" id="manage_money_tpl">
     <div class="display-height"></div>
     <div class="icon-box">
       <img src="images/money_icon.png" alt="">
@@ -242,7 +242,7 @@
       </div>
     </div>
   </script>
-  <script type="text/html" id="manage_status_tpl">
+  <script type="text/tpl" id="manage_status_tpl">
     <div class="display-middle status-flex">
       <div class="status-flex-border">
         <div class="display-height"></div>
@@ -295,7 +295,7 @@
       <div class="status-name">回款</div>
     </div>
   </script>
-  <script type="text/html" id="alert_map_tpl">
+  <script type="text/tpl" id="alert_map_tpl">
     <div class="hospital-alert">
       <div class="hospital-alert-content">
         <div class="hospital-title">上海市XXX医院</div>
