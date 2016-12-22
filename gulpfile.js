@@ -27,7 +27,7 @@ var gulp = require('gulp'),
 	Q = require('q'),
 	del = require('del'),
 	pathConfig = {
-		dist: 'guangfa/',
+		dist: 'slyx_dist/',
 		src: 'src/',
 		rev: 'rev'
 	},
@@ -64,12 +64,27 @@ var condition = function (file) {
 	// TODO: add business logic
 	var file_path = file.history[0].replace(file.cwd+'/', '');
 	if(file_path === pathConfig.src + 'js/jslib/underscore.js') {
-		console.log(file.history[0].replace(file.cwd+'/', ''));
 		return false;
 	}
 	else {
 		return true;
 	}
+};
+var js_uglify = function(file) {
+	if (yargs.pub === 'url') {
+		var file_path = file.history[0].replace(file.cwd+'/', '');
+		var indexOf =  file_path.indexOf('.json');
+		if(indexOf > -1) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	else {
+		return false;
+	}
+
 };
 gulp.task('server', function () {
 	console.log(yargs.p);
@@ -179,7 +194,9 @@ gulp.task('build-dist-html', function () {
 gulp.task('build-dist-js', function () {
 	return mkRev(gulp.src([pathConfig.src + 'js/**/*.*'])
 		.pipe(pkg.if(condition, template(api)))
-		.pipe(pkg.if(js, pkg.uglify()))
+		.pipe(pkg.if(js_uglify, pkg.uglify().on('error', function(err){
+			console.log(err);
+		})))
 		.pipe(gulp.dest(pathConfig.dist))
 		.pipe(browserSync.reload({
 			stream: true

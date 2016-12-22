@@ -10,13 +10,122 @@ var index = {
     var $manage_money_tpl = $.trim(self.manage_money_tpl());
     $manage_money_radius.html($manage_money_tpl);
     self.img_rotate();
+    self.icon_box();
+    index.init_ajax('china');
+    $('.progress-visit').css('display', 'none');
+    self.small_bg();
+/*    self.map_bg();*/
+  },
+
+  small_bg: function() {
+    var self = this;
+    var option_data = {
+      lineWidth: 0.5,
+      lineCap: 'butt',
+      strokeStyle:'rgba(63,63,63,0.2)',
+      data:[]
+    };
+    var space = 20;
+    var $small_bg = $('#small-bg');
+    var $right_content = $('.right-content');
+    var width = $small_bg.parent().width() - 2 * space;
+    var height = $small_bg.parent().height();
+    var horizontal_num = Math.ceil(width / space);
+    var more_left = width - Math.floor(width / space) * 20;
+    var more_bottom = height - Math.floor(height / space) * 20;
+    var right_width = Math.floor(horizontal_num*2/3) * space;
+    var left_width = width - right_width;
+    $('.map-content').css({
+      right: left_width + 'px'
+    });
+    $right_content.css({
+      left: right_width + 'px'
+    });
+    $('.body-content').css({
+      'margin-right': space + more_left + 'px',
+      'margin-bottom': space + more_bottom + 'px'
+    });
+    $('.content').css({
+      'padding-right': space + more_left + 'px',
+      'padding-bottom': space + more_bottom + 'px'
+    });
+    var right_content_height = $right_content.height();
+    var right_content_num = Math.ceil(right_content_height / space);
+    var right_top = Math.floor(right_content_num*2/3) * space;
+    var right_bottom = right_content_height - right_top;
+    $('.meter-box').css({
+      bottom: right_top + 'px'
+    });
+    $('.manage-box').css({
+      top: right_bottom + 'px'
+    });
+    self.canvas_line(option_data, 'small-bg', space);
+  },
+
+  map_bg: function() {
+    var self = this;
+    var option_data = {
+      lineWidth: 0.5,
+      lineCap: 'butt',
+      strokeStyle:'#192e34',
+      data:[]
+    };
+    var height_meter = parseInt($('.manage-box').css('top'));
+    self.canvas_line(option_data, 'map-bg', height_meter, true);
+  },
+
+  canvas_line: function(option_data, ele_id, space, border) {
+    var canvas_ele = new canvasMap();
+    var horizontal_option = $.extend({}, option_data);
+    var vertical_option = $.extend({}, option_data);
+    var $parent = $('#' + ele_id).parent();
+    var width = $parent.width();
+    var height = $parent.height();
+    var horizontal_num = Math.ceil(width / space);
+    var vertical_num = Math.ceil(height / space);
+    _(vertical_num).times(function(n) {
+      if (border) {
+        if (space*n <  height && n === vertical_num-1) {
+          horizontal_option.data.push({
+            start:{x:0, y:height},
+            end:{x:width, y:height}
+          });
+        }
+        n -= 1;
+      }
+      horizontal_option.data.push({
+        start:{x:0, y:(n+1)*space},
+        end:{x:width, y:(n+1)*space}
+      });
+
+    });
+    _(horizontal_num).times(function(n) {
+      if (border) {
+        if (space*n <  width && n === horizontal_num-1) {
+          var last_space = width - space*n;
+          vertical_option.data.push({
+            start:{x:width, y:0},
+            end:{x:width, y:height}
+          });
+        }
+        n -= 1;
+      }
+      vertical_option.data.push({
+        start:{x:(n+1)*space, y:0},
+        end:{x:(n+1)*space, y:height}
+      });
+    });
+    canvas_ele.init(document.getElementById(ele_id));
+    canvas_ele.horizontal_line(horizontal_option);
+    canvas_ele.horizontal_line(vertical_option);
+  },
+
+  icon_box: function() {
     $('.icon-box').each(function() {
       var $ele = $(this);
       var height = $ele.outerHeight();
       $ele.css('width', height + 'px');
     });
-    index.init_ajax('china');
-    $('.progress-visit').css('display', 'none');
   },
 
   select_con_text: function($obj) {
@@ -131,7 +240,7 @@ var index = {
   },
 
   init_ajax: function(area) {
-    var device = [];
+    var self = this;
     var hospital_num = {};
     var manage_money = 0;
     var manage_num = 0;
@@ -207,8 +316,8 @@ var index = {
           }
         }
         else if (china_path) {
-          if (hospital.price) {
-            manage_money += parseInt(hospital.price);
+          if (hospital.total_price) {
+            manage_money += parseInt(hospital.total_price);
           }
         }
         else {
@@ -217,18 +326,7 @@ var index = {
             return true;
           }
         }
-        device.push(hospital);
-        if(index !== 0) {
-          if (last_hospitals_name === hospital.hospitals_name) {
-            return true;
-          }
-          else {
-            last_hospitals_name = hospital.hospitals_name;
-          }
-        }
-        else {
-          last_hospitals_name = hospital.hospitals_name;
-        }
+        manage_num += hospital.total_num;
         var random = parseInt(Math.random()*10);
         while (random > 4 ) {
           random = parseInt(Math.random()*10);
@@ -333,10 +431,22 @@ var index = {
         });
         data_ajax.series = status_data;
       }
-      manage_num = device.length;
       COMMON_FUNC.animate_num($('#amount-text'), 0, manage_num);
       ECHARTS_FUNC.area_total_map('area-total-map', area, data_ajax);
       $('.img-rotate:last').click();
+      var clientWidth = document.body.clientWidth;
+      if (clientWidth > 1920) {
+        var rotate_length = $('.img-rotate').length;
+        var length_eq = 0;
+        var set_rotate = setInterval(function() {
+          if (length_eq === rotate_length - 1) {
+            clearInterval(set_rotate);
+            self.init_ajax(area);
+          }
+          $('.img-rotate:eq('+ length_eq +')').click();
+          length_eq ++;
+        }, 60*1000);
+      }
     })
   }
 };
@@ -346,6 +456,9 @@ $(function(){
   $(window).resize(function() {
     var area_echarts = GVR.ECHARTS.AREA_MAP;
     index.img_rotate();
+    index.icon_box();
+    index.small_bg();
+/*    index.map_bg();*/
     if (area_echarts) {
       area_echarts.resize();
     }

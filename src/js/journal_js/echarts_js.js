@@ -18,22 +18,19 @@ var ECHARTS_FUNC = {
 
   area_total_map: function(dom_id, file_name, data) {
     var self = this;
-    var file_path = '../jslib/area/' + file_name + '.json';
+    var file_path = 'jslib/area/' + file_name + '.json';
     var reg_file_path = /province_/.test(file_name);
     var province_path = /province_/.test(file_name);
     var china_path = /china/.test(file_name);
     if (reg_file_path) {
       file_name = file_name.replace('province_', '');
-      file_path = '../jslib/area/province/' + file_name + '.json';
+      file_path = 'jslib/area/province/' + file_name + '.json';
     }
     $.get(file_path, function(area) {
-      function randomData() {
-        return Math.round(Math.random()*1000);
-      }
       echarts.registerMap(file_name, area);
       var myChart = echarts.init(document.getElementById(dom_id));
       var option = {
-        backgroundColor: '#0b151e',
+        backgroundColor: 'rgba(0,0,0,0)',
         title: {
           left: 'center',
           textStyle: {
@@ -220,6 +217,7 @@ var ECHARTS_FUNC = {
         });
       });
       myChart.on('click', function(area) {
+        console.log(area);
         if(area.componentType === 'markPoint') {
           var dom = myChart.getDom();
           var dom_left = $(dom).width();

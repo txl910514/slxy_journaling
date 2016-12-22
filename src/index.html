@@ -25,6 +25,9 @@
 </head>
 <body>
   <div class="content position-absolute" id="init-url" url="/s/vyunying/all">
+    <div class="position-absolute">
+      <canvas  id="small-bg"></canvas>
+    </div>
     <div class="header">
       <div class="slyx-log">
         <img src="images/slxy_logo.png" alt="">
@@ -75,7 +78,7 @@
     </div>
     <div class="body-content position-absolute">
       <div class="map-content position-absolute">
-        <div class="progress-visit">
+        <div class="progress-visit" style="display: none">
           <div class="progress-title">
             <span class="display-middle">总拜访数</span>
             <span class="display-middle">/</span>
@@ -94,6 +97,9 @@
           <div class="map-select-content display-none">
 
           </div>
+        </div>
+        <div  class="position-absolute">
+          <canvas id="map-bg"></canvas>
         </div>
         <div class="position-absolute" id="area-total-map">
 
@@ -311,6 +317,7 @@
     </div>
   </script>
 </body>
+<script type="text/javascript" src="journal_js/canvas_js.js"></script>
 <script type="text/javascript" src="journal_js/common.js"></script>
 <script type="text/javascript" src="journal_js/echarts_js.js"></script>
 <script type="text/javascript" src="journal_js/index.js"></script>
