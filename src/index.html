@@ -24,7 +24,7 @@
   </script>
 </head>
 <body>
-  <div class="content position-absolute" id="init-url" url="/s/vyunying/all">
+  <div class="content position-absolute" id="init-url" url1="/s/vyunying/all" url2="/s/vbigdisplay/all">
     <div class="position-absolute">
       <canvas  id="small-bg"></canvas>
     </div>
@@ -85,8 +85,8 @@
             <span class="display-middle total-hospital-num">全国医院总数</span>
           </div>
           <div class="progress-content">
-            <div class="progress-con" style="width: 60%;"></div>
-            <div class="position-absolute progress-num">5000/10000</div>
+            <div class="progress-con" style="width: 0%;"></div>
+            <div class="position-absolute progress-num">0/0</div>
           </div>
         </div>
         <div class="map-select">
@@ -252,10 +252,8 @@
     <div class="display-middle status-flex">
       <div class="status-flex-border">
         <div class="display-height"></div>
-        <div class="manage-text display-middle">
-          <div class="num-style num-1"></div>
-          <div class="num-style num-2"></div>
-          <div class="num-style num-3"></div>
+        <div class="manage-text display-middle" id='deliver'>
+
         </div>
         <div class="display-middle manage-unit">家</div>
         <div class="linear-height"></div>
@@ -265,10 +263,8 @@
     <div class="display-middle status-flex">
       <div class="status-flex-border">
         <div class="display-height"></div>
-        <div class="manage-text display-middle">
-          <div class="num-style num-1"></div>
-          <div class="num-style num-2"></div>
-          <div class="num-style num-3"></div>
+        <div class="manage-text display-middle" id='probation'>
+
         </div>
         <div class="display-middle manage-unit">家</div>
         <div class="linear-height"></div>
@@ -278,10 +274,8 @@
     <div class="display-middle status-flex">
       <div class="status-flex-border ">
         <div class="display-height"></div>
-        <div class="manage-text display-middle">
-          <div class="num-style num-1"></div>
-          <div class="num-style num-2"></div>
-          <div class="num-style num-3"></div>
+        <div class="manage-text display-middle" id='regular'>
+
         </div>
         <div class="display-middle manage-unit">家</div>
         <div class="linear-height"></div>
@@ -291,12 +285,9 @@
     <div class="display-middle status-flex">
       <div class="status-flex-border no-border">
         <div class="display-height"></div>
-        <div class="manage-text display-middle">
-          <div class="num-style num-1"></div>
-          <div class="num-style num-2"></div>
-          <div class="num-style num-3"></div>
+        <div class="manage-text display-middle" id="received-payments">
         </div>
-        <div class="display-middle manage-unit">万元</div>
+        <div class="display-middle manage-unit" id='received-unit'>万元</div>
       </div>
       <div class="status-name">回款</div>
     </div>
@@ -304,11 +295,11 @@
   <script type="text/tpl" id="alert_map_tpl">
     <div class="hospital-alert">
       <div class="hospital-alert-content">
-        <div class="hospital-title">上海市XXX医院</div>
-        <div class="hospital-text">详细进度：确定意向</div>
-        <div class="hospital-text">等级：三甲</div>
-        <div class="hospital-text">MEMS：张维</div>
-        <div class="hospital-text">确定意向时间：2016/12/03</div>
+        <div class="hospital-title"><%- hospital_name %></div>
+        <div class="hospital-text">详细进度：<%- status %></div>
+        <div class="hospital-text">等级：<%- grade %></div>
+        <div class="hospital-text">MEMS：<%- mems %></div>
+        <div class="hospital-text">确定意向时间：<%- updata_at %></div>
       </div>
       <div class="alert-top-left alert-radius-border"></div>
       <div class="alert-top-right alert-radius-border"></div>

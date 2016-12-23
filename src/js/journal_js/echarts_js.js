@@ -217,32 +217,65 @@ var ECHARTS_FUNC = {
         });
       });
       myChart.on('click', function(area) {
-        console.log(area);
-        if(area.componentType === 'markPoint') {
-          var dom = myChart.getDom();
-          var dom_left = $(dom).width();
-          var dom_top = $(dom).height();
-          var $body = $('body');
-          $body.find('.hospital-alert').remove();
-          var $alert_map_tpl = $(self.alert_map_tpl());
-          $alert_map_tpl.find('.hospital-title').css('color', area.color);
-          $alert_map_tpl.find('.alert-radius-border').css('border-color', area.color);
-          $body.append($alert_map_tpl);
-          var alert_height = $alert_map_tpl.height();
-          var alert_width = $alert_map_tpl.width();
-          var left = area.event.offsetX + alert_width / 8;
-          var top = area.event.offsetY - alert_height / 7;
-          if ((left + alert_width) > dom_left) {
-            left =  area.event.offsetX - alert_width;
-          }
-          if (top + alert_height > dom_top) {
-            top = area.event.offsetY - alert_height*2 / 3;
-            left =  area.event.offsetX - alert_width /2 + 11 ;
-          } else if (top < 10) {
-            top = area.event.offsetY + alert_height*2 / 3 - 25;
-            left =  area.event.offsetX - alert_width /2 + 11 ;
-          }
-          $alert_map_tpl.css({'border-color': area.color, 'left': left +'px', 'top': top + 'px'});
+        if(area.componentType === 'markPoint' && !$('.img-rotate.active#use').length) {
+          console.log(area);
+          var $init_url = $('#init-url');
+          var $content = $('#content');
+          var vbigdisplay_url = '<%=base%>' + $init_url.attr('url2');
+          $.when(
+            index.vbigdisplay_ajax_init($content, {}, vbigdisplay_url)
+          ).done(function(vbigdisplay){
+              console.log(vbigdisplay);
+              _.each(vbigdisplay, function(hospital) {
+                if (hospital.hospital_name === area.name) {
+                  hospital.updata_at = hospital.updata_at.replace(/\s\d{2}:\d{2}:\d{2}/g, '');
+                  switch (Number(hospital.business_status)) {
+                    case 1:
+                      hospital.status = '拜访中';
+                      break;
+                    case 2:
+                      hospital.status = '洽谈中';
+                      break;
+                    case 3:
+                      hospital.status = '确定意向';
+                      break;
+                    case 4:
+                      hospital.status = '部署中';
+                      break;
+                    case 5:
+                      hospital.status = '培训中';
+                      break;
+                    default :
+                      hospital.status = '使用中';
+                      break;
+                  }
+                  var dom = myChart.getDom();
+                  var dom_left = $(dom).width();
+                  var dom_top = $(dom).height();
+                  var $body = $('body');
+                  $body.find('.hospital-alert').remove();
+                  var $alert_map_tpl = $(self.alert_map_tpl(hospital));
+                  $alert_map_tpl.find('.hospital-title').css('color', area.color);
+                  $alert_map_tpl.find('.alert-radius-border').css('border-color', area.color);
+                  $body.append($alert_map_tpl);
+                  var alert_height = $alert_map_tpl.height();
+                  var alert_width = $alert_map_tpl.width();
+                  var left = area.event.offsetX + alert_width / 8;
+                  var top = area.event.offsetY - alert_height / 7;
+                  if ((left + alert_width) > dom_left) {
+                    left =  area.event.offsetX - alert_width;
+                  }
+                  if (top + alert_height > dom_top) {
+                    top = area.event.offsetY - alert_height*2 / 3;
+                    left =  area.event.offsetX - alert_width /2 + 11 ;
+                  } else if (top < 10) {
+                    top = area.event.offsetY + alert_height*2 / 3 - 25;
+                    left =  area.event.offsetX - alert_width /2 + 11 ;
+                  }
+                  $alert_map_tpl.css({'border-color': area.color, 'left': left +'px', 'top': top + 'px'});
+                }
+              });
+            });
         }
         else {
 
