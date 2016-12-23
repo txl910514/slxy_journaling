@@ -208,6 +208,9 @@ var COMMON_FUNC = {
 /*          self.full_loading("hide");*/
         },
         error: function(xhr, msg, error){
+          console.log(xhr);
+          console.log(msg);
+          console.log(error);
           if(msg === "error"){
             if(xhr.status === 404){
               console.info("无效的数据");

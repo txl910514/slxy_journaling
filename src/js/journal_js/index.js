@@ -192,8 +192,6 @@ var index = {
         left = (box_width - 2 * width) / 2;
       }
       else {
-        console.log(box_height);
-        console.log(width);
         width = box_width * 0.45;
         left = '5%';
       }
@@ -248,7 +246,7 @@ var index = {
     var self = this;
     var hospital_num = {};
     var manage_money = 0, manage_num = 0, translate_num = 0, total_hospital = 0,
-      deliver = 0,  probation = 0,  regular = 0, received_payments = 0;
+      deliver = 0,  probation = 0,  regular = 0, received_payments = 0, manage_frequency = 0;
     var province_path = /province_/.test(area);
     var china_path = /china/.test(area);
     var province_replace = area.replace(/province_/, '');
@@ -308,223 +306,258 @@ var index = {
     var vyunying_url = '<%=base%>' + $init_url.attr('url1');
     var vbigdisplay_url = '<%=base%>' + $init_url.attr('url2');
     $.when(
-      self.returns_ajax_init($init_url, {}, vyunying_url),
-      self.vbigdisplay_ajax_init($content, {}, vbigdisplay_url)
-    ).done(function(vyunying, vbigdisplay){
-        var concat_yunying = vyunying[0].concat(vbigdisplay[0]);
-        _.each(concat_yunying, function(hospital, index) {
-          if (province_path) {
-            var province_text = hospital.province.replace(/[\u5e02|\u7701]/,'');
-            var province_array_text;
-            _.each(GVR.JSON.provinceJson, function(provinceJson, province_index) {
-              if (province_replace === provinceJson) {
-                province_array_text = GVR.JSON.provinceArray[province_index];
+      self.returns_ajax_init($init_url, {}, vyunying_url)
+    ).then(function(vyunying){
+        $.when(self.vbigdisplay_ajax_init($content, {}, vbigdisplay_url)).then(function(vbigdisplay) {
+
+          var concat_yunying = vyunying.concat(vbigdisplay.entity);
+          _.each(vbigdisplay.otherInfo, function(otherInfo) {
+            if (province_path) {
+              if (!otherInfo.province) {
+                return true;
               }
-            });
-            if (province_text !== province_array_text) {
-              return true;
-            }
-          }
-          else if (china_path) {
-            if (hospital.total_price) {
-              manage_money += parseInt(hospital.total_price);
-            }
-          }
-          else {
-            var area_replace = area.replace('.geo', '');
-            if (hospital.district !== GVR.JSON.area_json[area_replace][0] + '区') {
-              return true;
-            }
-          }
-          if (hospital.total_num) {
-            manage_num += hospital.total_num;
-          }
-          if(hospital.received_payments) {
-            received_payments += hospital.received_payments;
-          }
-          total_hospital += 1;
-          var status;
-          switch (Number(hospital.business_status)) {
-            case 1:
-              status = '拜访中';
-              translate_num += 1;
-              break;
-            case 2:
-              status = '洽谈中';
-              break;
-            case 3:
-              status = '确定意向';
-              break;
-            case 4:
-              status = '部署中';
-              break;
-            case 5:
-              status = '培训中';
-              break;
-            default :
-              status = '使用中';
-              hospital.business_status = 6;
-              break;
-          }
-          switch (Number(hospital.business_detaile)) {
-            case 1:
-              deliver +=1;
-              break;
-            case 2:
-              probation += 1;
-              break;
-            case 3:
-              regular += 1;
-              break;
-            default :
-              break;
-          }
-          var hospital_json = {
-            district: hospital.district,
-            province: hospital.province,
-            status:status,
-            business_status: hospital.business_status
-          };
-          var point_json = {
-            name: hospital.hospitals_name || hospital.hospital_name,
-            coord: [hospital.lon, hospital.lat],
-            value: hospital.hospitals_id
-          };
-          switch (hospital_json.status) {
-            case '洽谈中':
-              hospital_classify.palaver.push(hospital_json);
-              status_data.palaver.point.push(point_json);
-              break;
-            case '确定意向':
-              hospital_classify.purpose.push(hospital_json);
-              status_data.purpose.point.push(point_json);
-              break;
-            case '部署中':
-              hospital_classify.arrange.push(hospital_json);
-              status_data.arrange.point.push(point_json);
-              break;
-            case '培训中':
-              hospital_classify.train.push(hospital_json);
-              status_data.train.point.push(point_json);
-              break;
-            case '使用中':
-              hospital_classify.use.push(hospital_json);
-              status_data.use.point.push(point_json);
-              break;
-            default:
-              break;
-          }
-        });
-        hospital_num = {
-          palaver_num: hospital_classify.palaver.length,
-          purpose_num: hospital_classify.purpose.length,
-          arrange_num: hospital_classify.arrange.length,
-          train_num: hospital_classify.train.length,
-          use_num: hospital_classify.use.length
-        };
-        GVR.JSON.hospital_num = hospital_num;
-        if (china_path) {
-          _.each(hospital_classify,function(classify, classify_key) {
-            var area_num = {
-              db: 0,
-              hb: 0,
-              hd: 0,
-              hn: 0,
-              hz: 0,
-              xb: 0,
-              xn: 0
-            };
-            _.each(classify, function(hospital, hospital_key) {
-              _.each(GVR.JSON.area_json, function(areaJson, area_key) {
-                if (hospital.district === areaJson[0] + '区' ) {
-                  area_num[area_key] = area_num[area_key] + 1;
-                  if(data_ajax.max < area_num[area_key]) {
-                    data_ajax.max = area_num[area_key];
-                  }
+              var province_text = otherInfo.province.replace(/[\u5e02|\u7701]/,'');
+              var province_array_text;
+              _.each(GVR.JSON.provinceJson, function(provinceJson, province_index) {
+                if (province_replace === provinceJson) {
+                  province_array_text = GVR.JSON.provinceArray[province_index];
                 }
               });
-            });
-            status_data[classify_key].data.push(area_num);
+              if (province_text === province_array_text) {
+                if (otherInfo.usage_count) {
+                  manage_frequency += parseInt(otherInfo.usage_count);
+                }
+              }
+            }
+            else if (china_path) {
+              if (otherInfo.usage_count) {
+                manage_frequency += parseInt(otherInfo.usage_count);
+              }
+            }
+            else {
+              var area_replace = area.replace('.geo', '');
+              if (otherInfo.district !== GVR.JSON.area_json[area_replace][0] + '区') {
+                if (otherInfo.usage_count) {
+                  manage_frequency += parseInt(otherInfo.usage_count);
+                }
+              }
+            }
           });
-          data_ajax.series = status_data;
-          COMMON_FUNC.animate_num($('#money-text'), 0, manage_money);
-        }
-        else if (province_path) {
-          data_ajax.series = status_data;
-        }
-        else {
-          _.each(hospital_classify, function(classify, classify_key) {
-            var province_num = {};
-            _.each(classify, function(hospital, hospital_key) {
-              _.each(GVR.JSON.provinceArray, function(provinceJson, province_key) {
-                var province_reg = hospital.province.replace(/[\u5e02|\u7701]/,'');
-                if (province_reg === provinceJson) {
-                  if (province_num[provinceJson]) {
-                    province_num[provinceJson] = province_num[provinceJson] + 1;
-                  }
-                  else {
-                    province_num[provinceJson] = 1;
-                  }
-                  if(province_num[provinceJson]) {
-                    if(data_ajax.max < province_num[provinceJson]) {
-                      data_ajax.max = province_num[provinceJson];
+          _.each(concat_yunying, function(hospital, index) {
+            if (province_path) {
+              var province_text = hospital.province.replace(/[\u5e02|\u7701]/,'');
+              var province_array_text;
+              _.each(GVR.JSON.provinceJson, function(provinceJson, province_index) {
+                if (province_replace === provinceJson) {
+                  province_array_text = GVR.JSON.provinceArray[province_index];
+                }
+              });
+              if (province_text !== province_array_text) {
+                return true;
+              }
+            }
+            else if (china_path) {
+
+              if (hospital.total_price) {
+                manage_money += parseInt(hospital.total_price);
+              }
+            }
+            else {
+              var area_replace = area.replace('.geo', '');
+              if (hospital.district !== GVR.JSON.area_json[area_replace][0] + '区') {
+                return true;
+              }
+            }
+            if (hospital.total_num) {
+              manage_num += hospital.total_num;
+            }
+            if(hospital.received_payments) {
+              received_payments += hospital.received_payments;
+            }
+            total_hospital += 1;
+            var status;
+            switch (Number(hospital.business_status)) {
+              case 1:
+                status = '拜访中';
+                translate_num += 1;
+                break;
+              case 2:
+                status = '洽谈中';
+                break;
+              case 3:
+                status = '确定意向';
+                break;
+              case 4:
+                status = '部署中';
+                break;
+              case 5:
+                status = '培训中';
+                break;
+              default :
+                status = '使用中';
+                hospital.business_status = 6;
+                break;
+            }
+            switch (Number(hospital.business_detaile)) {
+              case 1:
+                deliver +=1;
+                break;
+              case 2:
+                probation += 1;
+                break;
+              case 3:
+                regular += 1;
+                break;
+              default :
+                break;
+            }
+            var hospital_json = {
+              district: hospital.district,
+              province: hospital.province,
+              status:status,
+              business_status: hospital.business_status
+            };
+            var point_json = {
+              name: hospital.hospitals_name || hospital.hospital_name,
+              coord: [hospital.lon, hospital.lat],
+              value: hospital.hospitals_id
+            };
+            switch (hospital_json.status) {
+              case '洽谈中':
+                hospital_classify.palaver.push(hospital_json);
+                status_data.palaver.point.push(point_json);
+                break;
+              case '确定意向':
+                hospital_classify.purpose.push(hospital_json);
+                status_data.purpose.point.push(point_json);
+                break;
+              case '部署中':
+                hospital_classify.arrange.push(hospital_json);
+                status_data.arrange.point.push(point_json);
+                break;
+              case '培训中':
+                hospital_classify.train.push(hospital_json);
+                status_data.train.point.push(point_json);
+                break;
+              case '使用中':
+                hospital_classify.use.push(hospital_json);
+                status_data.use.point.push(point_json);
+                break;
+              default:
+                break;
+            }
+          });
+          hospital_num = {
+            palaver_num: hospital_classify.palaver.length,
+            purpose_num: hospital_classify.purpose.length,
+            arrange_num: hospital_classify.arrange.length,
+            train_num: hospital_classify.train.length,
+            use_num: hospital_classify.use.length
+          };
+          GVR.JSON.hospital_num = hospital_num;
+          if (china_path) {
+            _.each(hospital_classify,function(classify, classify_key) {
+              var area_num = {
+                db: 0,
+                hb: 0,
+                hd: 0,
+                hn: 0,
+                hz: 0,
+                xb: 0,
+                xn: 0
+              };
+              _.each(classify, function(hospital, hospital_key) {
+                _.each(GVR.JSON.area_json, function(areaJson, area_key) {
+                  if (hospital.district === areaJson[0] + '区' ) {
+                    area_num[area_key] = area_num[area_key] + 1;
+                    if(data_ajax.max < area_num[area_key]) {
+                      data_ajax.max = area_num[area_key];
                     }
                   }
-                }
+                });
               });
+              status_data[classify_key].data.push(area_num);
             });
-
-            status_data[classify_key].data.push(province_num);
-          });
-          data_ajax.series = status_data;
-        }
-        if(!china_path) {
-          if (received_payments > 10000) {
-            received_payments = parseInt(received_payments /10000);
-            $('#received-unit').text('万元');
+            data_ajax.series = status_data;
+            COMMON_FUNC.animate_num($('#money-text'), 0, manage_money);
           }
-          else if(received_payments > 100000000){
-            $('#received-unit').text('亿元');
+          else if (province_path) {
+            data_ajax.series = status_data;
           }
           else {
-            $('#received-unit').text('元');
-          }
-          COMMON_FUNC.animate_num($('#deliver'), 0, deliver);
-          COMMON_FUNC.animate_num($('#probation'), 0, probation);
-          COMMON_FUNC.animate_num($('#regular'), 0, regular);
-          COMMON_FUNC.animate_num($('#received-payments'), 0, received_payments);
-        }
-        var progress = parseInt((translate_num / total_hospital) *100);
-        $('.progress-con').css('width', progress + '%');
-        $('.progress-num').text(translate_num + '/' + total_hospital);
-        COMMON_FUNC.animate_num($('#amount-text'), 0, manage_num);
-        ECHARTS_FUNC.area_total_map('area-total-map', area, data_ajax);
-        $('.img-rotate:last').click();
-        var clientWidth = document.body.clientWidth;
-        if (clientWidth > 1920) {
-          var rotate_length = $('.img-rotate').length;
-          var length_eq = 0;
-          var set_rotate = setInterval(function() {
-            if (length_eq === rotate_length - 1) {
-              clearInterval(set_rotate);
-              self.init_ajax(area);
-            }
-            $('.img-rotate:eq('+ length_eq +')').click();
-            length_eq ++;
-          }, 60*1000);
-        }
+            _.each(hospital_classify, function(classify, classify_key) {
+              var province_num = {};
+              _.each(classify, function(hospital, hospital_key) {
+                _.each(GVR.JSON.provinceArray, function(provinceJson, province_key) {
+                  var province_reg = hospital.province.replace(/[\u5e02|\u7701]/,'');
+                  if (province_reg === provinceJson) {
+                    if (province_num[provinceJson]) {
+                      province_num[provinceJson] = province_num[provinceJson] + 1;
+                    }
+                    else {
+                      province_num[provinceJson] = 1;
+                    }
+                    if(province_num[provinceJson]) {
+                      if(data_ajax.max < province_num[provinceJson]) {
+                        data_ajax.max = province_num[provinceJson];
+                      }
+                    }
+                  }
+                });
+              });
 
+              status_data[classify_key].data.push(province_num);
+            });
+            data_ajax.series = status_data;
+          }
+          if(!china_path) {
+            if (received_payments > 10000) {
+              received_payments = parseInt(received_payments /10000);
+              $('#received-unit').text('万元');
+            }
+            else if(received_payments > 100000000){
+              $('#received-unit').text('亿元');
+            }
+            else {
+              $('#received-unit').text('元');
+            }
+            COMMON_FUNC.animate_num($('#deliver'), 0, deliver);
+            COMMON_FUNC.animate_num($('#probation'), 0, probation);
+            COMMON_FUNC.animate_num($('#regular'), 0, regular);
+            COMMON_FUNC.animate_num($('#received-payments'), 0, received_payments);
+          }
+          var progress = parseInt((translate_num / total_hospital) *100);
+          $('.progress-con').css('width', progress + '%');
+          $('.progress-num').text(translate_num + '/' + total_hospital);
+          COMMON_FUNC.animate_num($('#amount-text'), 0, manage_num);
+          COMMON_FUNC.animate_num($('#js-manage-frequency'),0, manage_frequency);
+          ECHARTS_FUNC.area_total_map('area-total-map', area, data_ajax);
+          $('.img-rotate:last').click();
+          var clientWidth = document.body.clientWidth;
+          if (clientWidth > 1920) {
+            var rotate_length = $('.img-rotate').length;
+            var length_eq = 0;
+            var set_rotate = setInterval(function() {
+              if (length_eq === rotate_length - 1) {
+                clearInterval(set_rotate);
+                self.init_ajax(area);
+              }
+              $('.img-rotate:eq('+ length_eq +')').click();
+              length_eq ++;
+            }, 60*1000);
+          }
+        });
     });
   },
 
   returns_ajax_init: function($init_url, data, url) {
-
     return COMMON_FUNC.ajax_get($init_url, data, url, function(result) {
     });
   },
 
   vbigdisplay_ajax_init: function($init_url, data, url) {
     return COMMON_FUNC.ajax_get($init_url, data, url, function(result) {
+
     });
   }
 };
