@@ -225,8 +225,8 @@ var ECHARTS_FUNC = {
           $.when(
             index.vbigdisplay_ajax_init($content, {}, vbigdisplay_url)
           ).done(function(vbigdisplay){
-              console.log(vbigdisplay);
-              _.each(vbigdisplay, function(hospital) {
+              console.log(vbigdisplay.entity);
+              _.each(vbigdisplay.entity, function(hospital) {
                 if (hospital.hospital_name === area.name) {
                   hospital.updata_at = hospital.updata_at.replace(/\s\d{2}:\d{2}:\d{2}/g, '');
                   switch (Number(hospital.business_status)) {

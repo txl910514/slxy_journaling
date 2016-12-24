@@ -60,6 +60,10 @@ img{
   position: relative;
   top: $padding10;
 }
+.alert-border-transparent {
+  border-top: solid $width1 $color2;
+  border-left: solid $width1 $color2;
+}
 .content{
   padding: 0 $padding20 $padding20 $padding20;
   #small-bg {

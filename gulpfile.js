@@ -87,7 +87,6 @@ var js_uglify = function(file) {
 
 };
 gulp.task('server', function () {
-	console.log(yargs.p);
 	yargs.p = yargs.p || 3000;
 	browserSync.init({
 		server: {
@@ -153,7 +152,7 @@ gulp.task('build-dist-sass', function () {
 			errorHandler: pkg.notify.onError('Error: <%= error.message %>')
 		}))
 		.pipe(pkg.autoprefixer({
-			browsers: ['> 1%', 'last 2 versions', 'Firefox ESR', 'Opera 12.1']
+			browsers: ['last 3 versions', '> 1%', 'Firefox ESR', 'Opera 12.1']
 		}))
 		.pipe(pkg.revReplace({
 			manifest: gulp.src("./rev/manifest.img.json")
@@ -207,9 +206,9 @@ gulp.task('build-dist-js', function () {
 });
 //合并
 gulp.task('build-rep-rev', ['build-dist-html', 'build-dist-js'], function () {
+	console.log('html');
 	return gulp.src([
-			pathConfig.dist + '**/*.html',
-			'!' + pathConfig.dist + 'index.html',
+			pathConfig.dist + '**/*.html'
 		])
 		.pipe(pkg.revReplace({
 			manifest: gulp.src("./rev/*.*")
