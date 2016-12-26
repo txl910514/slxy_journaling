@@ -345,6 +345,10 @@ var index = {
           });
           _.each(concat_yunying, function(hospital, index) {
             if (province_path) {
+              console.log(hospital);
+              if (!hospital.province) {
+                return true;
+              }
               var province_text = hospital.province.replace(/[\u5e02|\u7701]/,'');
               var province_array_text;
               _.each(GVR.JSON.provinceJson, function(provinceJson, province_index) {
@@ -363,6 +367,9 @@ var index = {
               }
             }
             else {
+              if (!hospital.district) {
+                return true;
+              }
               var area_replace = area.replace('.geo', '');
               if (hospital.district !== GVR.JSON.area_json[area_replace][0] + '区') {
                 return true;
