@@ -336,7 +336,7 @@ var index = {
             }
             else {
               var area_replace = area.replace('.geo', '');
-              if (otherInfo.district !== GVR.JSON.area_json[area_replace][0] + '区') {
+              if (otherInfo.district === GVR.JSON.area_json[area_replace][0] + '区') {
                 if (otherInfo.usage_count) {
                   manage_frequency += parseInt(otherInfo.usage_count);
                 }

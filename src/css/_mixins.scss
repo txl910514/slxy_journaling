@@ -191,7 +191,7 @@
     transform:rotate(#{($i - 1) * 36}deg);
   }
   .meter-arrow-#{$i} {
-    transform:rotate(#{($i - 1) * 36 + 16}deg);
+    transform:rotate(#{($i - 1) * 36 + 18}deg);
   }
 }
 
