@@ -140,7 +140,7 @@ var ECHARTS_FUNC = {
           data: map_data,
           markPoint: {
             symbol: 'circle',
-            symbolSize: 15,
+            symbolSize: 10,
             label: {
               normal: {
                 show: false,

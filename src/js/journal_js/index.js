@@ -324,28 +324,27 @@ var index = {
                 }
               });
               if (province_text === province_array_text) {
-                if (otherInfo.usage_count) {
-                  manage_frequency += parseInt(otherInfo.usage_count);
+                if (otherInfo.count) {
+                  manage_frequency += parseInt(otherInfo.count);
                 }
               }
             }
             else if (china_path) {
-              if (otherInfo.usage_count) {
-                manage_frequency += parseInt(otherInfo.usage_count);
+              if (otherInfo.count) {
+                manage_frequency += parseInt(otherInfo.count);
               }
             }
             else {
               var area_replace = area.replace('.geo', '');
               if (otherInfo.district === GVR.JSON.area_json[area_replace][0] + '区') {
-                if (otherInfo.usage_count) {
-                  manage_frequency += parseInt(otherInfo.usage_count);
+                if (otherInfo.count) {
+                  manage_frequency += parseInt(otherInfo.count);
                 }
               }
             }
           });
           _.each(concat_yunying, function(hospital, index) {
             if (province_path) {
-              console.log(hospital);
               if (!hospital.province) {
                 return true;
               }
@@ -377,6 +376,8 @@ var index = {
             }
             if (hospital.total_num) {
               manage_num += hospital.total_num;
+              console.log(hospital.province);
+              console.log(hospital.total_num);
             }
             if(hospital.received_payments) {
               received_payments += hospital.received_payments;
