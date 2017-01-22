@@ -245,7 +245,7 @@ var index = {
   init_ajax: function(area) {
     var self = this;
     var hospital_num = {};
-    var manage_money = 0, manage_num = 0, translate_num = 0, total_hospital = 0,
+    var manage_money = 0, manage_num = 0, translate_num = 0, total_hospital = 0,all_total_hospital = 0,
       deliver = 0,  probation = 0,  regular = 0, received_payments = 0, manage_frequency = 0;
     var province_path = /province_/.test(area);
     var china_path = /china/.test(area);
@@ -311,12 +311,10 @@ var index = {
         $.when(self.vbigdisplay_ajax_init($content, {}, vbigdisplay_url)).then(function(vbigdisplay) {
 
           var concat_yunying = vyunying.concat(vbigdisplay.entity);
-          _.each(vbigdisplay.otherInfo, function(otherInfo) {
-            if (province_path) {
-              if (!otherInfo.province) {
-                return true;
-              }
-              var province_text = otherInfo.province.replace(/[\u5e02|\u7701]/,'');
+          if (province_path) {
+            _.each(vbigdisplay.proHosCount, function(proHos_count) {
+              var province_text = proHos_count.province.replace(/[\u5e02|\u7701]/,'');
+              province_text = province_text.replace(/[\u7ef4|\u543e|\u5c14|\u56de|\u58ee|\u65cf|\u81ea|\u6cbb|\u533a]/g,'');
               var province_array_text;
               _.each(GVR.JSON.provinceJson, function(provinceJson, province_index) {
                 if (province_replace === provinceJson) {
@@ -324,6 +322,40 @@ var index = {
                 }
               });
               if (province_text === province_array_text) {
+                if (proHos_count.hos_count) {
+                  all_total_hospital  = parseInt(proHos_count.hos_count);
+                }
+              }
+            })
+          }
+          else if (china_path) {
+
+          }
+          else {
+            _.each(vbigdisplay.disHosCount, function(disHos_count) {
+              var area_replace = area.replace('.geo', '');
+              if (disHos_count.district === GVR.JSON.area_json[area_replace][0] + '区') {
+                if (disHos_count.hos_count) {
+                  all_total_hospital  = parseInt(disHos_count.hos_count);
+                }
+              }
+            })
+          }
+          _.each(vbigdisplay.otherInfo, function(otherInfo) {
+            if (province_path) {
+              if (!otherInfo.province) {
+                return true;
+              }
+              var province_text = otherInfo.province.replace(/[\u5e02|\u7701]/,'');
+              province_text = province_text.replace(/[\u7ef4|\u543e|\u5c14|\u56de|\u58ee|\u65cf|\u81ea|\u6cbb|\u533a]/g,'');
+              var province_array_text;
+              _.each(GVR.JSON.provinceJson, function(provinceJson, province_index) {
+                if (province_replace === provinceJson) {
+                  province_array_text = GVR.JSON.provinceArray[province_index];
+                }
+              });
+              if (province_text === province_array_text) {
+                console.log(province_text);
                 if (otherInfo.count) {
                   manage_frequency += parseInt(otherInfo.count);
                 }
@@ -349,6 +381,7 @@ var index = {
                 return true;
               }
               var province_text = hospital.province.replace(/[\u5e02|\u7701]/,'');
+              province_text = province_text.replace(/[\u7ef4|\u543e|\u5c14|\u56de|\u58ee|\u65cf|\u81ea|\u6cbb|\u533a]/g,'');
               var province_array_text;
               _.each(GVR.JSON.provinceJson, function(provinceJson, province_index) {
                 if (province_replace === provinceJson) {
@@ -356,6 +389,7 @@ var index = {
                 }
               });
               if (province_text !== province_array_text) {
+                console.log(province_text);
                 return true;
               }
             }
@@ -376,8 +410,6 @@ var index = {
             }
             if (hospital.total_num) {
               manage_num += hospital.total_num;
-              console.log(hospital.province);
-              console.log(hospital.total_num);
             }
             if(hospital.received_payments) {
               received_payments += hospital.received_payments;
@@ -534,9 +566,9 @@ var index = {
             COMMON_FUNC.animate_num($('#regular'), 0, regular);
             COMMON_FUNC.animate_num($('#received-payments'), 0, received_payments);
           }
-          var progress = parseInt((translate_num / total_hospital) *100);
+          var progress = parseInt((total_hospital / all_total_hospital) *100);
           $('.progress-con').css('width', progress + '%');
-          $('.progress-num').text(translate_num + '/' + total_hospital);
+          $('.progress-num').text(total_hospital + '/' + all_total_hospital);
           COMMON_FUNC.animate_num($('#amount-text'), 0, manage_num);
           COMMON_FUNC.animate_num($('#js-manage-frequency'),0, manage_frequency);
           ECHARTS_FUNC.area_total_map('area-total-map', area, data_ajax);

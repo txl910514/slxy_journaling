@@ -140,7 +140,7 @@ var ECHARTS_FUNC = {
           data: map_data,
           markPoint: {
             symbol: 'circle',
-            symbolSize: 10,
+            symbolSize: 13,
             label: {
               normal: {
                 show: false,
@@ -218,14 +218,12 @@ var ECHARTS_FUNC = {
       });
       myChart.on('click', function(area) {
         if(area.componentType === 'markPoint' && !$('.img-rotate.active#use').length) {
-          console.log(area);
           var $init_url = $('#init-url');
           var $content = $('#content');
           var vbigdisplay_url = '<%=base%>' + $init_url.attr('url2');
           $.when(
             index.vbigdisplay_ajax_init($content, {}, vbigdisplay_url)
           ).done(function(vbigdisplay){
-              console.log(vbigdisplay.entity);
               _.each(vbigdisplay.entity, function(hospital) {
                 if (hospital.hospital_name === area.name) {
                   hospital.updata_at = hospital.updata_at.replace(/\s\d{2}:\d{2}:\d{2}/g, '');
@@ -254,6 +252,7 @@ var ECHARTS_FUNC = {
                   var dom_top = $(dom).height();
                   var $body = $('body');
                   $body.find('.hospital-alert').remove();
+                  hospital.grade = hospital.grade || '-';
                   var $alert_map_tpl = $(self.alert_map_tpl(hospital));
                   $alert_map_tpl.find('.hospital-title').css('color', area.color);
                   $alert_map_tpl.find('.alert-radius-border').css('border-color', area.color);
