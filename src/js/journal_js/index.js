@@ -574,18 +574,16 @@ var index = {
           ECHARTS_FUNC.area_total_map('area-total-map', area, data_ajax);
           $('.img-rotate:last').click();
           var clientWidth = document.body.clientWidth;
-          if (clientWidth > 1920) {
-            var rotate_length = $('.img-rotate').length;
-            var length_eq = 0;
-            var set_rotate = setInterval(function() {
-              if (length_eq === rotate_length - 1) {
-                clearInterval(set_rotate);
-                self.init_ajax(area);
-              }
-              $('.img-rotate:eq('+ length_eq +')').click();
-              length_eq ++;
-            }, 60*1000);
-          }
+          var rotate_length = $('.img-rotate').length;
+          var length_eq = 0;
+          var set_rotate = setInterval(function() {
+            if (length_eq === rotate_length - 1) {
+              clearInterval(set_rotate);
+              self.init_ajax(area);
+            }
+            $('.img-rotate:eq('+ length_eq +')').click();
+            length_eq ++;
+          }, 60*1000);
         });
     });
   },
