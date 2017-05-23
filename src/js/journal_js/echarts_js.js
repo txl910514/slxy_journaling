@@ -44,12 +44,15 @@ var ECHARTS_FUNC = {
               var area = '';
               if (china_path) {
                 _.each(GVR.JSON.area_json, function(areaJson, key) {
-                  _.each(areaJson, function(area_province) {
+                  _.each(params.nameareaJson, function(area_province) {
                     if (params.name === area_province) {
                       area = areaJson[0] + '地区';
                     }
                   })
                 });
+                if (params.name === '台湾') {
+                  area = '台湾' + '地区';
+                }
                 return area + '<br/>医院数量：' + params.value + '家';
               }
               else if(province_path ){
@@ -286,6 +289,63 @@ var ECHARTS_FUNC = {
       myChart.on('mousedown', function(area) {
         var $body = $('body');
         $body.find('.hospital-alert').remove();
+      });
+      myChart.on('legendselected', function(area) {
+        var selected = area.selected
+        var max = 0;
+        var name = '';
+        switch (area.name) {
+          case '洽谈中':
+          name = 'palaver'
+          break;
+          case '确定意向':
+            name = 'purpose'
+            break;
+          case '部署中':
+            name = 'arrange'
+            break;
+          case '培训中':
+            name = 'train'
+            break;
+          case '使用中':
+            name = 'use'
+            break;
+        }
+        var areaNum = data.series[name].data[0]
+
+        for (var key in areaNum) {
+          if(max < areaNum[key]) {
+            max = areaNum[key]
+          }
+        }
+        for (var key in selected) {
+          if(key === area.name) {
+            areaNum[key] = true;
+          }
+          else {
+            areaNum[key] = false;
+          }
+        }
+        option.legend.selected = selected;
+        if (!province_path) {
+          var visualMap = {
+            min: 0,
+            max: max,
+            left: 10,
+            text: ['高','低'],           // 文本，默认为数值文本
+            calculable: true,
+            itemWidth: 30,
+            itemHeight: 180,
+            bottom: 10,
+            color: ['#00c2eb', 'transparent'],
+            textStyle: {
+              color: '#6bd8ea',
+              fontSize: 16
+            }
+          };
+          option.visualMap = visualMap;
+        }
+        myChart.setOption(option);
       });
       myChart.setOption(option);
       GVR.ECHARTS.AREA_MAP = myChart;

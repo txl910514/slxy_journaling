@@ -568,7 +568,9 @@ var index = {
                   }
                 });
               });
-              status_data[classify_key].data.push(area_num);
+              if (classify.length) {
+                status_data[classify_key].data.push(area_num);
+              }
             });
             data_ajax.series = status_data;
             manage_money = 27830409060
@@ -598,7 +600,6 @@ var index = {
                   }
                 });
               });
-
               status_data[classify_key].data.push(province_num);
             });
             data_ajax.series = status_data;

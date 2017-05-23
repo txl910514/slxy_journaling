@@ -76,7 +76,6 @@ var COMMON_FUNC = {
     var length = (endNum - startNum).toString().length - 2;
     var add = 0;
     var $div;
-    console.log(length)
     if (length > 5) {
       for (var i = 0; i < length; i++) {
         add += Math.pow(11,i);
@@ -88,7 +87,6 @@ var COMMON_FUNC = {
       }
     }
     else  if (length <= 4 && length > 0) {
-      console.log(length)
       for (var i = 0; i < length; i++) {
         add += Math.pow(8, i+1);
       }
