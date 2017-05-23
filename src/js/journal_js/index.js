@@ -260,31 +260,79 @@ var index = {
     var status_data = {
       palaver:{
         name: '洽谈中',
-        data:[],
+        data:[
+          {
+            db: 5,
+            hb: 19,
+            hd: 11,
+            hn: 13,
+            hz: 15,
+            xb: 5,
+            xn: 7
+          }
+        ],
         point:[],
         color:'#f1635e'
       },
       purpose:{
         name: '确定意向',
-        data:[],
+        data:[
+          {
+            db: 3,
+            hb: 12,
+            hd: 7,
+            hn: 5,
+            hz: 10,
+            xb: 2,
+            xn: 2
+          }
+        ],
         point:[],
         color:'#ffc528'
       },
       arrange:{
         name: '部署中',
-        data:[],
+        data:[
+          {
+            db: 2,
+            hb: 3,
+            hd: 7,
+            hn: 6,
+            hz: 3,
+            xb: 1,
+            xn: 3
+          }
+        ],
         point:[],
         color:'#6bd8ea'
       },
       train:{
         name: '培训中',
-        data:[],
+        data:[
+          {
+            db: 2,
+            hb: 0,
+            hd: 5,
+            hn: 3,
+            hz: 2,
+            xb: 0,
+            xn: 2
+          }
+        ],
         point:[],
         color:'#00d991'
       },
       use:{
         name: '使用中',
-        data:[],
+        data:[{
+          db: 12,
+          hb: 47,
+          hd: 72,
+          hn: 58,
+          hz: 51,
+          xb: 15,
+          xn: 27
+        }],
         point:[],
         color:'#939fdf'
       }
@@ -298,7 +346,7 @@ var index = {
         '培训中': false,
         '使用中':true
       },
-      max:0,
+      max:72,
       series:[]
     };
     var $init_url = $('#init-url');
@@ -309,7 +357,13 @@ var index = {
       self.returns_ajax_init($init_url, {}, vyunying_url)
     ).then(function(vyunying){
         $.when(self.vbigdisplay_ajax_init($content, {}, vbigdisplay_url)).then(function(vbigdisplay) {
-
+          vbigdisplay = {
+            disHosCount: [],
+            entity: [],
+            otherInfo: [],
+            proHosCount: []
+          }
+          vyunying = []
           var concat_yunying = vyunying.concat(vbigdisplay.entity);
           if (province_path) {
             _.each(vbigdisplay.proHosCount, function(proHos_count) {
@@ -355,7 +409,6 @@ var index = {
                 }
               });
               if (province_text === province_array_text) {
-                console.log(province_text);
                 if (otherInfo.count) {
                   manage_frequency += parseInt(otherInfo.count);
                 }
@@ -389,7 +442,6 @@ var index = {
                 }
               });
               if (province_text !== province_array_text) {
-                console.log(province_text);
                 return true;
               }
             }
@@ -488,11 +540,11 @@ var index = {
             }
           });
           hospital_num = {
-            palaver_num: hospital_classify.palaver.length,
-            purpose_num: hospital_classify.purpose.length,
-            arrange_num: hospital_classify.arrange.length,
-            train_num: hospital_classify.train.length,
-            use_num: hospital_classify.use.length
+            palaver_num: 75,
+            purpose_num: 41,
+            arrange_num: 25,
+            train_num: 14,
+            use_num: 282
           };
           GVR.JSON.hospital_num = hospital_num;
           if (china_path) {
@@ -519,6 +571,7 @@ var index = {
               status_data[classify_key].data.push(area_num);
             });
             data_ajax.series = status_data;
+            manage_money = 27830409060
             COMMON_FUNC.animate_num($('#money-text'), 0, manage_money);
           }
           else if (province_path) {
@@ -569,34 +622,33 @@ var index = {
           var progress = parseInt((total_hospital / all_total_hospital) *100);
           $('.progress-con').css('width', progress + '%');
           $('.progress-num').text(total_hospital + '/' + all_total_hospital);
+          manage_num = 576934
           COMMON_FUNC.animate_num($('#amount-text'), 0, manage_num);
+          manage_frequency = 1439372
           COMMON_FUNC.animate_num($('#js-manage-frequency'),0, manage_frequency);
           ECHARTS_FUNC.area_total_map('area-total-map', area, data_ajax);
           $('.img-rotate:last').click();
           var clientWidth = document.body.clientWidth;
           var rotate_length = $('.img-rotate').length;
           var length_eq = 0;
-          var set_rotate = setInterval(function() {
+/*          var set_rotate = setInterval(function() {
             if (length_eq === rotate_length - 1) {
               clearInterval(set_rotate);
               self.init_ajax(area);
             }
             $('.img-rotate:eq('+ length_eq +')').click();
             length_eq ++;
-          }, 60*1000);
+          }, 60*1000);*/
         });
     });
   },
 
   returns_ajax_init: function($init_url, data, url) {
-    return COMMON_FUNC.ajax_get($init_url, data, url, function(result) {
-    });
+    return {}
   },
 
   vbigdisplay_ajax_init: function($init_url, data, url) {
-    return COMMON_FUNC.ajax_get($init_url, data, url, function(result) {
-
-    });
+    return []
   }
 };
 

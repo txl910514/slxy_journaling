@@ -92,7 +92,7 @@ var ECHARTS_FUNC = {
           itemWidth: 30,
           itemHeight: 180,
           bottom: 10,
-          color: ['#00c2eb', '#081218'],
+          color: ['#00c2eb', 'transparent'],
           textStyle: {
             color: '#6bd8ea',
             fontSize: 16
@@ -109,6 +109,9 @@ var ECHARTS_FUNC = {
                 opacity:0,
               }
             }
+          },
+          {
+            name: '台湾',value: 0
           }
         ];
         if(china_path) {

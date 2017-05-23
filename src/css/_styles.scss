@@ -80,11 +80,14 @@ img{
       top: 0;
       height: $header-half-height;
       margin-top: $margin20;
+      img {
+        max-height: 100%;
+      }
     }
     .header-title{
       text-align: center;
       color: $color1;
-      font-size: $fs40;
+      font-size: $fs28;
     }
     .time-box{
       position:absolute;
@@ -164,6 +167,7 @@ img{
         z-index: 10;
         font-size: $fs12;
         text-align: right;
+        display: none;
         .map-select-title {
           cursor: pointer;
           border-radius: $radius4;

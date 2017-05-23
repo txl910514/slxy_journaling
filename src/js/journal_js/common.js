@@ -68,7 +68,7 @@ var COMMON_FUNC = {
 
   animate_num: function($dom,startNum, endNum) {
     var self = this;
-    var time = 10;
+    var time = 5;
     if (startNum > endNum) {
       console.info('数据顺序不对');
       return false;
@@ -76,9 +76,21 @@ var COMMON_FUNC = {
     var length = (endNum - startNum).toString().length - 2;
     var add = 0;
     var $div;
-    if (length > 0) {
-      for (i = 0; i < length; i++) {
-        add += Math.pow(10,i);
+    console.log(length)
+    if (length > 5) {
+      for (var i = 0; i < length; i++) {
+        add += Math.pow(11,i);
+      }
+    }
+    else if (length <= 5 && length > 4) {
+      for (var i = 0; i < length; i++) {
+        add += Math.pow(10, i);
+      }
+    }
+    else  if (length <= 4 && length > 0) {
+      console.log(length)
+      for (var i = 0; i < length; i++) {
+        add += Math.pow(8, i+1);
       }
     }
     else {
